@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+             x:Class="PriceAnomalyDetection.Views.AnomalyDetectorView"
+             xmlns:charts="clr-namespace:Microcharts.Forms;assembly=Microcharts.Forms"
+             xmlns:vm="clr-namespace:PriceAnomalyDetection.ViewModels"
+             ios:Page.UseSafeArea="True">
+
+    <ContentPage.BindingContext>
+        <vm:AnomalyDetectorViewModel/>
+    </ContentPage.BindingContext>
+
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Margin="10,5" 
+                   TextColor="DarkSlateBlue"
+                   FontAttributes="Bold"
+                   Text="Price variation chart" />
+
+            <charts:ChartView Chart="{Binding PriceChart}" 
+                              HeightRequest="275"/>
+
+            <StackLayout Margin="10,5" 
+                         Orientation="Horizontal">
+
+                <Label Margin="0,0,10,0" 
+                       TextColor="DarkSlateBlue"
+                       VerticalOptions="Center"
+                       VerticalTextAlignment="Center"
+                       Text="Sensitivity level: " />
+
+                <Picker Margin="0,0,10,0"
+                        Title="Select a value"
+                        VerticalOptions="Center"
+                        TitleColor="DarkSlateBlue"
+                        SelectedItem="{Binding Sensitivity, Mode=TwoWay}">
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:Int32}">
+                            <x:Int32>99</x:Int32>
+                            <x:Int32>98</x:Int32>
+                            <x:Int32>97</x:Int32>
+                            <x:Int32>96</x:Int32>
+                            <x:Int32>95</x:Int32>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                </Picker>
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}"/>
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" Margin="5">
+                <Button Margin="10,5"
+                        WidthRequest="150"
+                        Text="Find anomalies"
+                        HorizontalOptions="Center"
+                        BackgroundColor="DeepSkyBlue"
+                        TextColor="White"
+                        CornerRadius="20"
+                        Command="{Binding FindAnomaliesCommand}"/>
+
+                <Button Margin="10,5"
+                        WidthRequest="150"
+                        Text="Analyze last"
+                        HorizontalOptions="Center"
+                        BackgroundColor="MediumSeaGreen"
+                        TextColor="White"
+                        CornerRadius="20"
+                        Command="{Binding DetectStatusCommand}"/>
+            </StackLayout>
+
+            <Label Margin="10,5" 
+                   TextColor="DarkRed"
+                   FontAttributes="Bold"
+                   Text="{Binding PriceAnomalies.Count, StringFormat='Number of Anomalies detected: {0}'}" />
+
+            <ListView Margin="10,5,10,10"
+                      ItemsSource="{Binding PriceAnomalies}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid VerticalOptions="Center" Margin="5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <Label Grid.Row="0"
+                                       Grid.Column="0" 
+                                       TextColor="Black"
+                                       FontAttributes="Bold"
+                                       Text="{Binding Timestamp, StringFormat='Date: {0:dd/MM/yyyy}'}" />
+
+                                <Label Grid.Row="0"
+                                       Grid.Column="1"
+                                       TextColor="DarkSlateGray"
+                                       FontAttributes="Bold"
+                                       Text="{Binding Value, StringFormat='Price: {0:N2}'}" />
+
+                                <Label Grid.Row="1"
+                                       Grid.Column="0"
+                                       Grid.ColumnSpan="2"
+                                       Padding="5"
+                                       HorizontalOptions="Center"
+                                       FontAttributes="Bold"
+                                       TextColor="SaddleBrown"
+                                       Text="{Binding Range}" />
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
